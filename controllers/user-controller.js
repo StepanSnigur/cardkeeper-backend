@@ -14,6 +14,16 @@ class UserController {
       console.log(e)
     }
   }
+
+  async activate(req, res) {
+    try {
+      const activationLink = req.params.link
+      await userService.activate(activationLink)
+      // TODO redirect on activation
+    } catch (e) {
+      console.log(e)
+    }
+  }
 }
 
 module.exports = new UserController()
