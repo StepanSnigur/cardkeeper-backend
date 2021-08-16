@@ -4,6 +4,7 @@ const cors = require('cors')
 const cookieParser = require('cookie-parser')
 const mongoose = require('mongoose')
 const userRouter = require('./router/userRouter')
+const fileRouter = require('./router/fileRouter')
 
 const errorMiddleware = require('./middlewares/error-middleware')
 
@@ -13,6 +14,7 @@ app.use(express.json())
 app.use(cookieParser())
 app.use(cors())
 app.use('/user', userRouter)
+app.use('/files', fileRouter)
 
 // middlewares
 app.use(errorMiddleware)

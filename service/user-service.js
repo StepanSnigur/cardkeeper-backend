@@ -1,4 +1,5 @@
 const UserModel = require('../models/user-model')
+const ImageModel = require('../models/image-model')
 const bcrypt = require('bcrypt')
 const uuid = require('uuid')
 const mailService = require('./mail-service')
@@ -74,6 +75,22 @@ class UserService {
       ...tokens,
       user: userDto
     }
+  }
+
+  async setAvatar(id, file) {
+    const user = await UserModel.findById(id)
+    if (!user) throw ApiError.BadRequest('Неизвестный id пользователя')
+    if (!file) throw ApiError.BadRequest('Файл не был загружен')
+    
+    const imageName = uuid.v4()
+    const image = new ImageModel({
+      name: imageName,
+      data: file.buffer,
+      contentType: file.mimetype
+    })
+    await image.save()
+
+    return `${process.env.API_URL}/files/get/${image.name}`
   }
 }
 

@@ -55,13 +55,22 @@ class UserController {
     }
   }
 
-  async refresh(req, res) {
+  async refresh(req, res, next) {
     try {
       const { refreshToken } = req.cookies
       const userData = await userService.refresh(refreshToken)
 
       res.cookie('refreshToken', userData.refreshToken, { maxAge: cookieLifeTime, httpOnly: true })
       return res.json(userData)
+    } catch (e) {
+      next(e)
+    }
+  }
+
+  async setAvatar(req, res, next) {
+    try {
+      const url = await userService.setAvatar(req.user.id, req.file)
+      return res.json(url)
     } catch (e) {
       next(e)
     }
