@@ -7,6 +7,16 @@ const tokenService = require('./token-service')
 const UserDto = require('../dtos/user-dto')
 const ApiError = require('../exceptions/api-error')
 
+const getUserData = async (user) => {
+  const userDto = new UserDto(user)
+  const tokens = tokenService.generateTokens({ ...userDto })
+  await tokenService.saveToken(userDto.id, tokens.refreshToken)
+
+  return {
+    ...tokens,
+    user: userDto
+  }
+}
 class UserService {
   async registration(email, password) {
     const candidate = await UserModel.findOne({ email })
@@ -21,14 +31,7 @@ class UserService {
     })
     await mailService.sendActivationLink(email, `${process.env.API_URL}/user/activate/${activationLink}`)
 
-    const userDto = new UserDto(user) // contain fields: id, email, isActivated
-    const tokens = tokenService.generateTokens({ ...userDto })
-    await tokenService.saveToken(userDto.id, tokens.refreshToken)
-
-    return {
-      ...tokens,
-      user: userDto
-    }
+    return await getUserData(user)
   }
 
   async login(email, password) {
@@ -38,14 +41,19 @@ class UserService {
     const isPassEquals = await bcrypt.compare(password, user.password)
     if (!isPassEquals) throw ApiError.BadRequest('Неверный Email или пароль')
 
-    const userDto = new UserDto(user)
-    const tokens = tokenService.generateTokens({ ...userDto })
-    await tokenService.saveToken(userDto.id, tokens.refreshToken)
+    return await getUserData(user)
+  }
 
-    return {
-      ...tokens,
-      user: userDto
+  async autoLogin(id, token) {
+    const tokenData = tokenService.validateRefreshToken(token)
+    if (!tokenData) {
+      return next(ApiError.UnauthorizedError())
     }
+
+    const user = await UserModel.findById(id)
+    if (!user || !(user.email === tokenData.email)) throw ApiError.BadRequest('Ошибка входа')
+
+    return await getUserData(user)
   }
 
   async logout(refreshToken) {
@@ -68,13 +76,7 @@ class UserService {
     if (!userData || !dbToken) throw ApiError.UnauthorizedError()
 
     const user = await UserModel.findById(userData.id)
-    const userDto = new UserDto(user)
-    const tokens = tokenService.generateTokens({ ...userDto })
-    await tokenService.saveToken(userDto.id, tokens.refreshToken)
-    return {
-      ...tokens,
-      user: userDto
-    }
+    return await getUserData(user)
   }
 
   async setAvatar(id, file) {

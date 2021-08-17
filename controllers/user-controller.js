@@ -34,6 +34,18 @@ class UserController {
     }
   }
 
+  async autoLogin(req, res, next) {
+    try {
+      const { id, refreshToken } = req.body
+
+      const userData = await userService.autoLogin(id, refreshToken)
+      res.cookie('refreshToken', userData.refreshToken, { maxAge: cookieLifeTime, httpOnly: true })
+      return res.json(userData)
+    } catch (e) {
+      next(e)
+    }
+  }
+
   async logout(req, res, next) {
     try {
       const { refreshToken } = req.cookies
