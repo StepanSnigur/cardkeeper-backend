@@ -87,6 +87,29 @@ class UserController {
       next(e)
     }
   }
+
+  async addCard(req, res, next) {
+    try {
+      const { id } = req.user
+      const cardFaces = req.files
+
+      const updatedCards = await userService.addCard(id, cardFaces)
+      return res.json(updatedCards)
+    } catch (e) {
+      next(e)
+    }
+  }
+
+  async deleteCard(req, res, next) {
+    try {
+      const { cardId } = req.body
+      const { id } = req.user
+      const updatedCards = await userService.deleteCard(id, cardId)
+      return res.json(updatedCards)
+    } catch (e) {
+      next(e)
+    }
+  }
 }
 
 module.exports = new UserController()

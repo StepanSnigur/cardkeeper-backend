@@ -6,6 +6,7 @@ const mailService = require('./mail-service')
 const tokenService = require('./token-service')
 const UserDto = require('../dtos/user-dto')
 const ApiError = require('../exceptions/api-error')
+const imageService = require('./image-service')
 
 const getUserData = async (user) => {
   const userDto = new UserDto(user)
@@ -93,6 +94,38 @@ class UserService {
     await image.save()
 
     return `${process.env.API_URL}/files/get/${image.name}`
+  }
+
+  async addCard(id, cardFaces) {
+    const user = await UserModel.findById(id)
+    if (!user) throw ApiError.BadRequest('Вы не в сети')
+
+    const cardFacesUrl = cardFaces.map(async (image) => {
+      return await imageService.createImage(image)
+    })
+    const res = await Promise.all(cardFacesUrl)
+    const card = {
+      frontFace: res[0],
+      backFace: res[1]
+    }
+
+    user.cards.push(card)
+    await user.save()
+    return user.cards
+  }
+
+  async deleteCard(userId, cardId) {
+    const user = await UserModel.findById(userId)
+    if (!user) throw ApiError.BadRequest('Вы не в сети')
+
+    const cardToDelete = user.cards.find(card => card._id.toString() === cardId)
+    const imagesToDelete = [cardToDelete.frontFace, cardToDelete.backFace]
+    const deletedImages = imagesToDelete.map(async img => await imageService.deleteImage(img))
+    await Promise.all(deletedImages)
+
+    user.cards = user.cards.filter(card => card._id.toString() !== cardId)
+    await user.save()
+    return user.cards
   }
 }
 

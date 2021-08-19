@@ -25,7 +25,7 @@ router.get('/activate/:link', userController.activate)
 router.get('/refresh', userController.refresh)
 router.post('/uploadAvatar', authMiddleware, multer.single('avatar'), userController.setAvatar)
 
-router.post('/addCard')
-router.post('/deleteCard')
+router.post('/addCard', authMiddleware, multer.array('cardFaces'), userController.addCard)
+router.delete('/deleteCard', authMiddleware, userController.deleteCard)
 
 module.exports = router
