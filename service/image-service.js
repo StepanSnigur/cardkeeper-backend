@@ -7,6 +7,7 @@ class ImageService {
     return image
   }
   async createImage(file) {
+    console.log(file, 'image file')
     const imageName = uuid.v4()
     const image = new ImageModel({
       name: imageName,
