@@ -10,8 +10,8 @@ class ImageService {
     const imageName = uuid.v4()
     const image = new ImageModel({
       name: imageName,
-      data: file.buffer,
-      contentType: file.mimetype
+      data: file.base64,
+      contentType: file.type
     })
     await image.save()
 

@@ -5,7 +5,7 @@ class ImageController {
     try {
       const { name } = req.params
       const image = await imageService.getImage(name)
-      return res.json(image.data.toString('base64'))
+      return res.json(image.data)
     } catch (e) {
       next(e)
     }

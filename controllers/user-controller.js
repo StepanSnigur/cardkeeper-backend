@@ -91,9 +91,7 @@ class UserController {
   async addCard(req, res, next) {
     try {
       const { id } = req.user
-      const cardFaces = req.files
-      console.log(req.files)
-      console.log(req)
+      const cardFaces = req.body
 
       const updatedCards = await userService.addCard(id, cardFaces)
       return res.json(updatedCards)
