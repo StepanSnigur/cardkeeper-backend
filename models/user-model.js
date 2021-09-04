@@ -6,7 +6,11 @@ const UserSchema = new Schema({
   avatar: { type: String },
   isActivated: { type: Boolean, default: false },
   activationLink: { type: String },
-  cards: [{ frontFace: String, backFace: String }],
+  cards: [{
+    frontFace: String,
+    backFace: String,
+    qrCodes: [String],
+  }],
   settings: {
     darkTheme: { type: Boolean, default: true },
     fingerprint: { type: Boolean, default: false }

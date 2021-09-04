@@ -96,7 +96,7 @@ class UserService {
     return `${process.env.API_URL}/files/get/${image.name}`
   }
 
-  async addCard(id, cardFaces) {
+  async addCard(id, cardFaces, qrCodes) {
     const user = await UserModel.findById(id)
     if (!user) throw ApiError.BadRequest('Вы не в сети')
 
@@ -106,7 +106,8 @@ class UserService {
     const res = await Promise.all(cardFacesUrl)
     const card = {
       frontFace: res[0],
-      backFace: res[1]
+      backFace: res[1],
+      qrCodes,
     }
 
     user.cards.push(card)

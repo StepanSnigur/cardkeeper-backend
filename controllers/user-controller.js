@@ -91,9 +91,9 @@ class UserController {
   async addCard(req, res, next) {
     try {
       const { id } = req.user
-      const { cardFaces } = req.body
+      const { cardFaces, qrCodes } = req.body
 
-      const updatedCards = await userService.addCard(id, cardFaces)
+      const updatedCards = await userService.addCard(id, cardFaces, qrCodes)
       return res.json(updatedCards)
     } catch (e) {
       next(e)
