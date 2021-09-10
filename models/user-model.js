@@ -10,6 +10,7 @@ const UserSchema = new Schema({
     frontFace: String,
     backFace: String,
     qrCodes: [String],
+    cardName: String,
   }],
   settings: {
     darkTheme: { type: Boolean, default: true },
