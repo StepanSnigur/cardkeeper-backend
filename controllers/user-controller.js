@@ -100,6 +100,18 @@ class UserController {
     }
   }
 
+  async changeCard(req, res, next) {
+    try {
+      const { id } = req.user
+      const { cardId, newCardName } = req.body
+
+      const updatedCards = await userService.changeCard(id, cardId, newCardName)
+      return res.json(updatedCards)
+    } catch (e) {
+      next(e)
+    }
+  }
+
   async deleteCard(req, res, next) {
     try {
       const { cardId } = req.body

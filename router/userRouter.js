@@ -19,6 +19,7 @@ router.get('/refresh', userController.refresh)
 router.post('/uploadAvatar', authMiddleware, userController.setAvatar)
 
 router.post('/addCard', authMiddleware, userController.addCard)
+router.post('/changeCard', authMiddleware, userController.changeCard)
 router.delete('/deleteCard', authMiddleware, userController.deleteCard)
 
 module.exports = router

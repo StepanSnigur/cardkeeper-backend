@@ -116,6 +116,16 @@ class UserService {
     return user.cards
   }
 
+  async changeCard(userId, cardId, newCardName) {
+    const user = await UserModel.findById(userId)
+    const newUserData = user.toObject()
+    const cardToUpdate = newUserData.cards.find(card => card._id.toString() === cardId)
+    cardToUpdate.cardName = newCardName
+    await UserModel.updateOne({ _id: userId }, newUserData, { upsert: true })
+    await user.save()
+    return newUserData.cards
+  }
+
   async deleteCard(userId, cardId) {
     const user = await UserModel.findById(userId)
     if (!user) throw ApiError.BadRequest('Вы не в сети')
