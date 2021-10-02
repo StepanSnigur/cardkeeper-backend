@@ -12,10 +12,6 @@ const UserSchema = new Schema({
     qrCodes: [String],
     cardName: String,
   }],
-  settings: {
-    darkTheme: { type: Boolean, default: true },
-    fingerprint: { type: Boolean, default: false }
-  }
 })
 
 module.exports = model('User', UserSchema)
